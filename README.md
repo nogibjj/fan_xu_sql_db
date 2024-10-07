@@ -93,15 +93,23 @@ def load(dataset="data/historical_projections.csv"):
 ```
 
 3. CRUD operations:
+
     a. Create Data
+
     Created a row of fake data for Lebron James
         ![create](images/create.png)
+
     b. Read Data
+
     Read all rows in dataset
         ![read](images/read.png)
+
     c. Update Data
+
     Update bust status if bust percentage above 50%
         ![update](images/update.png)
+
     d. Delete Data
+
     Delete all rows where position is center
         ![delete](images/delete.png)
