@@ -2,6 +2,8 @@
 
 [![CI/CD](https://github.com/nogibjj/fan_xu_sql_assn/actions/workflows/cicd.yml/badge.svg)](https://github.com/nogibjj/fan_xu_sql_assn/actions/workflows/cicd.yml)
 
+This project is for practicing interacting with a SQL Database using a python script, in this case SQLite. After connecting to the database, 4 SQL queries are ran against the database to perfrom CRUD operations. 
+
 ### Requirements:
 
 - Connect to a SQL database
@@ -92,10 +94,14 @@ def load(dataset="data/historical_projections.csv"):
 
 3. CRUD operations:
     a. Create Data
-        (images/create.png)
+    Created a row of fake data for Lebron James
+        ![create](images/create.png)
     b. Read Data
-        (images/read.png)
+    Read all rows in dataset
+        ![read](images/read.png)
     c. Update Data
-        (images/update.png)
+    Update bust status if bust percentage above 50%
+        ![update](images/update.png)
     d. Delete Data
-        (images/delete.png)
+    Delete all rows where position is center
+        ![delete](images/delete.png)
