@@ -14,7 +14,10 @@ def load(dataset="data/historical_projections.csv"):
 
     # prints the full working directory and path
     print(os.getcwd())
+    data = []
     payload = csv.reader(open(dataset, newline=""), delimiter=",")
+    for row in payload:
+        data.append(row)
     conn = sqlite3.connect("NBA_2015.db")
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS NBA_2015")
@@ -23,7 +26,10 @@ def load(dataset="data/historical_projections.csv"):
         Projected SPM,Superstar,Starter,Role Player,Bust)"""
     )
     # insert
-    c.executemany("INSERT INTO NBA_2015 VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)", payload)
+    c.executemany("INSERT INTO NBA_2015 VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
     return "NBA_2015.db"
+
+
+load()
