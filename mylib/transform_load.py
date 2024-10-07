@@ -24,7 +24,7 @@ def load(dataset="data/historical_projections.csv"):
     )
     # insert
     for row in payload:
-        c.execute("INSERT INTO NBA_2015 VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)", tuple(row))
+        c.execute("INSERT INTO NBA_2015 VALUES (?)", tuple(row))
     conn.commit()
     conn.close()
     return "NBA_2015.db"
