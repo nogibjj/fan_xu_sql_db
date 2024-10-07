@@ -8,7 +8,8 @@ import requests
 
 
 def extract(
-    url="https://github.com/fivethirtyeight/data/raw/refs/heads/master/nba-draft-2015/historical_projections.csv",
+    url="""https://github.com/fivethirtyeight/data/raw
+    /refs/heads/master/nba-draft-2015/historical_projections.csv""",
     file_path="data/historical_projections.csv",
 ):
     """ "Extract a url to a file path"""

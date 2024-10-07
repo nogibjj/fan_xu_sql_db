@@ -1,7 +1,6 @@
 """
 Transforms and Loads data into the local SQLite3 database
-Example:
-,general name,count_products,ingred_FPro,avg_FPro_products,avg_distance_root,ingred_normalization_term,semantic_tree_name,semantic_tree_node
+
 """
 
 import sqlite3
@@ -20,7 +19,8 @@ def load(dataset="/workspaces/fan_xu_sql_assn/data/historical_projections.csv"):
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS NBA_2015")
     c.execute(
-        "CREATE TABLE NBA_2015 (Player,Position,ID,Draft Year,Projected SPM,Superstar,Starter,Role Player,Bust)"
+        """CREATE TABLE NBA_2015 (Player,Position,ID,Draft Year,
+        Projected SPM,Superstar,Starter,Role Player,Bust)"""
     )
     # insert
     c.executemany("INSERT INTO NBA_2015 VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)", payload)
