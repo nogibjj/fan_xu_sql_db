@@ -17,7 +17,7 @@ def load(dataset="data/historical_projections.csv"):
     data = []
     payload = csv.reader(open(dataset, newline=""), delimiter=",")
     for row in payload:
-        data.append(row)
+        data.append(tuple(row))
     conn = sqlite3.connect("NBA_2015.db")
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS NBA_2015")
@@ -25,11 +25,9 @@ def load(dataset="data/historical_projections.csv"):
         """CREATE TABLE NBA_2015 (Player,Position,ID,Draft Year,
         Projected SPM,Superstar,Starter,Role Player,Bust)"""
     )
+    print(data)
     # insert
     c.executemany("INSERT INTO NBA_2015 VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
     return "NBA_2015.db"
-
-
-load()
