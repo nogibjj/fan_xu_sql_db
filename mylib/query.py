@@ -30,7 +30,7 @@ def update():
     """Update bust status if bust percentage above 50%"""
     conn = sqlite3.connect("NBA_2015.db")
     cursor = conn.cursor()
-    cursor.execute("UPDATE NBA_2015 SET Bust = 'LOSER' WHERE Bust > '0.5';")
+    cursor.execute("UPDATE NBA_2015 SET Bust = 'BUST' WHERE Bust > '0.5';")
     conn.commit()
     conn.close()
     return "Successfully updated!"
