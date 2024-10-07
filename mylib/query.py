@@ -9,7 +9,7 @@ def create():
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO NBA_2015 VALUES "
-        "(Lebron James,SF,lebron-james,2003,100,100,100,100,100)"
+        "('Lebron James','SF','lebron-james','2003','100','100','100','100','100')"
     )
     conn.commit()
     conn.close()
