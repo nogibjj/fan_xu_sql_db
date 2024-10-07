@@ -3,8 +3,12 @@ Test goes here
 
 """
 
-from mylib.calculator import add
+import main
 
 
-def test_add():
-    assert add(1, 2) == 3
+def test_query():
+    assert main.query() == "Success"
+
+
+def test_load():
+    assert main.load() == "NBA_2015.db"
