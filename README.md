@@ -1,14 +1,13 @@
-## Fan Xu SQLite Lab
+## Fan Xu Complex SQL Query for a MySQL Database
 
-[![CI/CD](https://github.com/nogibjj/fan_xu_sql_assn/actions/workflows/cicd.yml/badge.svg)](https://github.com/nogibjj/fan_xu_sql_assn/actions/workflows/cicd.yml)
+[![CI](https://github.com/nogibjj/fan_xu_sql_db/actions/workflows/cicd.yml/badge.svg)](https://github.com/nogibjj/fan_xu_sql_db/actions/workflows/cicd.yml)
 
-This project is for practicing interacting with a SQL Database using a python script, in this case SQLite. After connecting to the database, 4 SQL queries are ran against the database to perfrom CRUD operations. 
+This project is for practicing interacting with an external Database using a python script, in this case DataBricks. After connecting to the database, a complex SQL query involving joins, aggregation, and sorting is run. 
 
 ### Requirements:
 
-- Connect to a SQL database
-- Perform CRUD operations
-- Write at least two different SQL queries
+- Design a complex SQL query involving joins, aggregation, and sorting
+- Provide an explanation for what the query is doing and the expected results
 
 ### Project Structure
 
