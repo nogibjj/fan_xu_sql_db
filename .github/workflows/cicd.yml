@@ -20,7 +20,9 @@ jobs:
         run: make lint
       - name: test
         env:
-          super_secret: ${{ secrets.SuperSecret }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME }}
+          DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
         run: make test
       - name: format
         run: make format
