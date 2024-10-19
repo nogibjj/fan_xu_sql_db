@@ -5,37 +5,32 @@ Test goes here
 
 from mylib.extract import extract
 from mylib.transform_load import load
-from mylib.query import create, read, update, delete
+from mylib.query import query
+import csv
+import os
+from databricks import sql
+from dotenv import load_dotenv
 
 
 def test_extract():
-    assert extract() == "data/historical_projections.csv"
+    """Test extract function"""
+    extract_test = extract()
+    assert extract_test == "data/historical_projections.csv"
 
 
 def test_load():
-    assert load() == "NBA_2015.db"
+    """tests load function"""
+    load_test = load()
+    assert load_test == "db loaded"
 
 
-def test_create():
-    assert create() == "Sucessfully created!"
-
-
-def test_read():
-    assert read() == "Successfully read!"
-
-
-def test_update():
-    assert update() == "Successfully updated!"
-
-
-def test_delete():
-    assert delete() == "Sucessfully deleted!"
+def test_query():
+    """test query function"""
+    query_test = query()
+    assert query_test == "query successful"
 
 
 if __name__ == "__main__":
     test_extract()
     test_load()
-    test_create()
-    test_read()
-    test_update()
-    test_delete()
+    test_query()

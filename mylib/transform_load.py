@@ -1,33 +1,60 @@
 """
-Transforms and Loads data into the local SQLite3 database
+Transforms and Loads data into the databricks database
 
 """
 
-import sqlite3
 import csv
 import os
+from databricks import sql
+from dotenv import load_dotenv
 
 
-# load the csv file and insert into a new sqlite3 database
 def load(dataset="data/historical_projections.csv"):
-    """ "Transforms and Loads data into the local SQLite3 database"""
-
-    # prints the full working directory and path
-    print(os.getcwd())
+    """Transforms and Loads data into the databricks database"""
     payload = csv.reader(open(dataset, newline=""), delimiter=",")
     next(payload)
-    conn = sqlite3.connect("NBA_2015.db")
-    c = conn.cursor()
-    c.execute("DROP TABLE IF EXISTS NBA_2015")
-    c.execute(
-        """CREATE TABLE NBA_2015 (Player,Position,ID,Draft Year,
-        Projected SPM,Superstar,Starter,Role Player,Bust)"""
-    )
-    # insert
-    c.executemany(
-        "INSERT INTO NBA_2015 VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)",
-        payload,
-    )
-    conn.commit()
-    conn.close()
-    return "NBA_2015.db"
+    load_dotenv()
+    with sql.connect(
+        server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
+        http_path=os.getenv("DATABRICKS_HTTP_PATH"),
+        access_token=os.getenv("DATABRICKS_TOKEN"),
+    ) as connection:
+
+        with connection.cursor() as cursor:
+
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS nba_2015 (Player STRING, 
+                Position STRING, ID STRING, Draft_Year INT, 
+                Projected_SPM FLOAT, Superstar FLOAT, Starter FLOAT, 
+                Role_Player FLOAT, Bust FLOAT)"""
+            )
+
+            cursor.execute("SELECT * FROM nba_2015")
+            result = cursor.fetchall()
+            if not result:
+                print("test")
+                sql_str = "INSERT INTO nba_2015 VALUES"
+                for i in payload:
+                    sql_str += "\n" + str(tuple(i)) + ","
+                sql_str = sql_str[:-1] + ";"
+                print(sql_str)
+
+                cursor.execute(sql_str)
+
+            # cursor.executemany(
+            #     "INSERT INTO nba_2015 VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)",
+            #     payload,
+            # )
+
+            # result = cursor.fetchall()
+
+            # for row in result:
+            #     print(row)
+
+            cursor.close()
+            connection.close()
+    return "db loaded"
+
+
+if __name__ == "__main__":
+    load()

@@ -1,53 +1,46 @@
 """Query the database"""
 
-import sqlite3
+import os
+from databricks import sql
+from dotenv import load_dotenv
+
+full_query = """
+WITH bust_chance AS (
+  SELECT Position,
+  AVG(Bust) AS bust_avg,
+  COUNT(Position) AS position_count
+  FROM default.nba_2015
+  GROUP BY Position
+)
+
+SELECT * FROM nba_2015
+JOIN bust_chance 
+ON nba_2015.Position = bust_chance.Position
+ORDER BY bust_chance.bust_avg DESC;
+"""
 
 
-def create():
-    """Create a fake data"""
-    conn = sqlite3.connect("NBA_2015.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO NBA_2015 VALUES "
-        "('Lebron James','SF','lebron-james','2003','100','100','100','100','100')"
-    )
-    conn.commit()
-    conn.close()
-    return "Sucessfully created!"
+# load the csv file and insert into a new sqlite3 database
+def query():
+    """Query the databricks database"""
+    load_dotenv()
+    with sql.connect(
+        server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
+        http_path=os.getenv("DATABRICKS_HTTP_PATH"),
+        access_token=os.getenv("DATABRICKS_TOKEN"),
+    ) as connection:
 
+        with connection.cursor() as cursor:
 
-def read():
-    """Read and print the database for all the rows of the table"""
-    conn = sqlite3.connect("NBA_2015.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM NBA_2015")
-    print(cursor.fetchall())
-    conn.close()
-    return "Successfully read!"
+            cursor.execute(full_query)
+            result = cursor.fetchall()
 
-
-def update():
-    """Update bust status if bust percentage above 50%"""
-    conn = sqlite3.connect("NBA_2015.db")
-    cursor = conn.cursor()
-    cursor.execute("UPDATE NBA_2015 SET Bust = 'BUST' WHERE Bust > '0.5';")
-    conn.commit()
-    conn.close()
-    return "Successfully updated!"
-
-
-def delete():
-    """Delete all rows where position is center"""
-    conn = sqlite3.connect("NBA_2015.db")
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM NBA_2015 WHERE Position = 'C';")
-    conn.commit()
-    conn.close()
-    return "Sucessfully deleted!"
+            for row in result:
+                print(row)
+            cursor.close()
+            connection.close()
+    return "query successful"
 
 
 if __name__ == "__main__":
-    create()
-    read()
-    update()
-    delete()
+    query()
