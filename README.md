@@ -12,7 +12,7 @@ This project is for practicing interacting with an external Database using a pyt
 ### Project Structure
 
 ```
-📦 fan_xu_sql_assn
+📦 fan_xu_sql_db
 ├─ .devcontainer
 │  ├─ Dockerfile
 │  └─ devcontainer.json
@@ -23,7 +23,6 @@ This project is for practicing interacting with an external Database using a pyt
 ├─ Dockerfile
 ├─ LICENSE
 ├─ Makefile
-├─ NBA_2015.db
 ├─ README.md
 ├─ data
 │  └─ historical_projections.csv
@@ -48,67 +47,54 @@ The dataset contains the data behind the story [Projecting The Top 50 Players In
 
 ### Steps:
 
-1. Extract csv file from github link.
+1. Connect to Databricks with an .env file including the Databricks token, server hostname, and http path.
 
 ```
-def extract(
-    url="""https://github.com/fivethirtyeight/data/raw
-    /refs/heads/master/nba-draft-2015/historical_projections.csv""",
-    file_path="data/historical_projections.csv",
-):
-    """ "Extract a url to a file path"""
-    with requests.get(url) as r:
-        with open(file_path, "wb") as f:
-            f.write(r.content)
-    return file_path
+import os
+from databricks import sql
+from dotenv import load_dotenv
+
+    load_dotenv()
+    with sql.connect(
+        server_hostname=os.getenv("DATABRICKS_SERVER_HOSTNAME"),
+        http_path=os.getenv("DATABRICKS_HTTP_PATH"),
+        access_token=os.getenv("DATABRICKS_TOKEN"),
+    ) as connection:
 ```
 
-2. From your csv file, transform and load the data into a SQLite3 database.
+- Make sure to include `databricks-sql-connector` and `python-dotenv` in the requirements.txt
+- If running CI/CD through GitHub actions, secrets can be created for the repository to access the .env values for Databricks. Include this code in the CI/CD yml file to access them
 
 ```
-# load the csv file and insert into a new sqlite3 database
-def load(dataset="data/historical_projections.csv"):
-    """ "Transforms and Loads data into the local SQLite3 database"""
-
-    # prints the full working directory and path
-    print(os.getcwd())
-    payload = csv.reader(open(dataset, newline=""), delimiter=",")
-    next(payload)
-    conn = sqlite3.connect("NBA_2015.db")
-    c = conn.cursor()
-    c.execute("DROP TABLE IF EXISTS NBA_2015")
-    c.execute(
-        """CREATE TABLE NBA_2015 (Player,Position,ID,Draft Year,
-        Projected SPM,Superstar,Starter,Role Player,Bust)"""
-    )
-    # insert
-    c.executemany(
-        "INSERT INTO NBA_2015 VALUES (? ,?, ?, ?, ?, ?, ?, ?, ?)",
-        payload,
-    )
-    conn.commit()
-    conn.close()
-    return "NBA_2015.db"
+env:
+    DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME }}
+    DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
 ```
 
-3. CRUD operations:
+2. Create your table in Databricks and insert your values if necessary
 
-    a. Create Data
+```
+cursor.execute("CREATE TABLE IF NOT EXISTS table_name")
+```
 
-    Created a row of fake data for Lebron James
-        ![create](images/create.png)
+3. Perform your query
 
-    b. Read Data
+### Query Explanation
 
-    Read all rows in dataset
-        ![read](images/read.png)
+```
+WITH bust_chance AS (
+  SELECT Position,
+  AVG(Bust) AS bust_avg,
+  COUNT(Position) AS position_count
+  FROM default.nba_2015
+  GROUP BY Position
+)
 
-    c. Update Data
+SELECT * FROM nba_2015
+JOIN bust_chance 
+ON nba_2015.Position = bust_chance.Position
+ORDER BY bust_chance.bust_avg DESC;
+```
 
-    Update bust status if bust percentage above 50%
-        ![update](images/update.png)
-
-    d. Delete Data
-
-    Delete all rows where position is center
-        ![delete](images/delete.png)
+In this query, a CTE (common table expression) called `bust_chance` is created that has additional aggregated information about NBA players grouped by position. The columns in this CTE consist of the position of each player, the average bust chance for that position, as well as the number of players in that position. This CTE is joined to the original table on the position column, and the joined table is ordered by descending bust chance. The expected output would then be all columns and rows of the original dataset with 3 additional columns added by the join. 
